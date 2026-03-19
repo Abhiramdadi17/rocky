@@ -760,8 +760,10 @@ function initAskButtons() {
     }
   }
 
+  let dodgeCooldown = false;
+
   function handleNoProximity(e) {
-    if (noDodging) return;
+    if (noDodging || dodgeCooldown) return;
     const rect = btnNo.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -769,8 +771,10 @@ function initAskButtons() {
     const dy = e.clientY - cy;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 60) {
+    if (dist < 80) {
+      dodgeCooldown = true;
       dodgeNo();
+      setTimeout(() => { dodgeCooldown = false; }, 800);
     }
   }
 
