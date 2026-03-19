@@ -156,37 +156,8 @@ function startAmbientAudio() {
     ambientGain = gain;
     gain.gain.value = 0;
     gain.connect(ac.destination);
-
-    [55, 82].forEach((freq, i) => {
-      const osc = ac.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      const g = ac.createGain();
-      g.gain.value = i === 0 ? 1 : 0.5;
-      osc.connect(g);
-      g.connect(gain);
-      osc.start();
-    });
-
-    const buf = ac.createBuffer(1, 2 * ac.sampleRate, ac.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-    const noise = ac.createBufferSource();
-    noise.buffer = buf;
-    noise.loop = true;
-    const filter = ac.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 200;
-    const ng = ac.createGain();
-    ng.gain.value = 0.08;
-    noise.connect(filter);
-    filter.connect(ng);
-    ng.connect(gain);
-    noise.start();
-
-    if (!audioMuted) {
-      gain.gain.linearRampToValueAtTime(0.15, ac.currentTime + 3);
-    }
+    
+    // Ambient drone removed per user request (was being mistaken for video audio)
   } catch (e) { /* silent */ }
 }
 
