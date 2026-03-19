@@ -129,6 +129,7 @@ function startExperience() {
   initRockyTooltipAutoShow();
   initAudioToggle();
   initRockyEasterEgg();
+  initSoundEffects();
 
   beginBtn.addEventListener('click', () => {
     document.getElementById('distance').scrollIntoView({ behavior: 'smooth' });
@@ -193,25 +194,110 @@ function startAmbientAudio() {
    WHOOSH SOUND — No button dodge
    ============================================= */
 function playWhoosh() {
+  if (audioMuted || !ambientCtx) return;
   try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const size = ac.sampleRate * 0.15;
-    const buf = ac.createBuffer(1, size, ac.sampleRate);
+    const size = ambientCtx.sampleRate * 0.15;
+    const buf = ambientCtx.createBuffer(1, size, ambientCtx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < size; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / size) ** 2;
-    const src = ac.createBufferSource();
+    const src = ambientCtx.createBufferSource();
     src.buffer = buf;
-    const f = ac.createBiquadFilter();
+    const f = ambientCtx.createBiquadFilter();
     f.type = 'bandpass';
     f.frequency.value = 1200;
     f.Q.value = 1.5;
-    const g = ac.createGain();
+    const g = ambientCtx.createGain();
     g.gain.value = 0.3;
     src.connect(f);
     f.connect(g);
-    g.connect(ac.destination);
+    g.connect(ambientCtx.destination);
     src.start();
   } catch (e) { /* silent */ }
+}
+
+/* =============================================
+   UI SOUND EFFECTS — Synthesis
+   ============================================= */
+const canPlaySfx = () => !audioMuted && ambientCtx;
+
+function playHoverBlip() {
+  if (!canPlaySfx()) return;
+  try {
+    const osc = ambientCtx.createOscillator();
+    const g = ambientCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1500, ambientCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ambientCtx.currentTime + 0.05);
+    g.gain.setValueAtTime(0.04, ambientCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ambientCtx.currentTime + 0.05);
+    osc.connect(g);
+    g.connect(ambientCtx.destination);
+    osc.start();
+    osc.stop(ambientCtx.currentTime + 0.05);
+  } catch(e){}
+}
+
+function playTypewriterThud() {
+  if (!canPlaySfx()) return;
+  try {
+    const osc = ambientCtx.createOscillator();
+    const g = ambientCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(200, ambientCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(50, ambientCtx.currentTime + 0.03);
+    g.gain.setValueAtTime(0.08, ambientCtx.currentTime);
+    g.gain.linearRampToValueAtTime(0.001, ambientCtx.currentTime + 0.03);
+    osc.connect(g);
+    g.connect(ambientCtx.destination);
+    osc.start();
+    osc.stop(ambientCtx.currentTime + 0.03);
+  } catch(e){}
+}
+
+function playPop() {
+  if (!canPlaySfx()) return;
+  try {
+    const osc = ambientCtx.createOscillator();
+    const g = ambientCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, ambientCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ambientCtx.currentTime + 0.1);
+    g.gain.setValueAtTime(0, ambientCtx.currentTime);
+    g.gain.linearRampToValueAtTime(0.15, ambientCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ambientCtx.currentTime + 0.1);
+    osc.connect(g);
+    g.connect(ambientCtx.destination);
+    osc.start(ambientCtx.currentTime);
+    osc.stop(ambientCtx.currentTime + 0.1);
+  } catch(e){}
+}
+
+function playSuccessChime() {
+  if (!canPlaySfx()) return;
+  try {
+    const freqs = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+    freqs.forEach((f, i) => {
+      const osc = ambientCtx.createOscillator();
+      const g = ambientCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      g.gain.setValueAtTime(0, ambientCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.15, ambientCtx.currentTime + 0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, ambientCtx.currentTime + 2.5 + i*0.4);
+      osc.connect(g);
+      g.connect(ambientCtx.destination);
+      osc.start();
+      osc.stop(ambientCtx.currentTime + 4);
+    });
+  } catch(e){}
+}
+
+function initSoundEffects() {
+  document.body.addEventListener('mouseenter', (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('a')) {
+      playHoverBlip();
+    }
+  }, true);
 }
 
 /* =============================================
@@ -616,6 +702,7 @@ function runTypewriter(lines) {
       el.textContent = '';
       el.appendChild(document.createTextNode(text.substring(0, charIdx)));
       el.appendChild(cursor);
+      playTypewriterThud();
       charIdx++;
       setTimeout(type, 50 + Math.random() * 30);
     } else {
@@ -756,6 +843,7 @@ function initAskButtons() {
         } else {
           spawnContainer.appendChild(btn);
         }
+        playPop();
       }, i * 100);
     }
   }
@@ -867,6 +955,8 @@ function initAskButtons() {
     // Hide ask content
     askContent.style.opacity = '0';
     askContent.style.pointerEvents = 'none';
+
+    playSuccessChime();
 
     // Remove dodge button if floating
     btnNo.style.display = 'none';
