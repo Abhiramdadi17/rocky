@@ -201,6 +201,26 @@
       </div>
     </section>
 
+    <!-- SECTION 4.5: LEAKED MISSION FOOTAGE -->
+    <section id="leakedFootage" class="section leaked-section">
+      <div class="section-overlay dark-overlay"></div>
+
+      <div class="section-eyebrow">
+        <span class="eyebrow-line"></span>
+        <p class="eyebrow-label">CLASSIFIED · LEAKED FOOTAGE</p>
+        <span class="eyebrow-line"></span>
+      </div>
+
+      <div class="leaked-content anim-section">
+        <p class="label-teal">SIMULATION PREVIEW · DO NOT DISTRIBUTE</p>
+        <div class="leaked-image-frame">
+          <img src="meme.jpg" alt="Mission preview" loading="lazy" />
+        </div>
+        <p class="leaked-caption">&ldquo;An artist&rsquo;s totally accurate interpretation of what the mission will look like&rdquo; 🎬</p>
+        <p class="leaked-disclaimer">* Source: NASA probably. Rocky&rsquo;s acting is 100% method.</p>
+      </div>
+    </section>
+
     <!-- SECTION 5: THE ASK -->
     <section id="theAsk" class="section ask-section">
       <div class="parallax-bg ask-bg" style="background-image:url('preview.webp');"></div>
@@ -222,6 +242,9 @@
           <button class="btn-no" id="btnNo">Maybe not...</button>
         </div>
 
+        <!-- Container for spawned yes buttons -->
+        <div class="spawned-buttons" id="spawnedButtons"></div>
+
         <p class="keyboard-hint anim-section" data-delay="5">press <kbd>Y</kbd> to accept mission</p>
       </div>
 
@@ -235,6 +258,10 @@
         />
         <h2 class="accepted-title">Mission Accepted. 🚀</h2>
         <p class="accepted-sub">See you at the theater.<br/>This is going to be incredible.</p>
+        <div class="accepted-meme">
+          <img src="meme.jpg" alt="Us at the premiere" loading="lazy" />
+          <p class="meme-caption">^ actual leaked footage of us at the premiere</p>
+        </div>
         <p class="accepted-theater" id="acceptedTheater"></p>
         <div class="countdown-block" id="countdownBlock">
           <span class="countdown-number" id="countdownDays">&mdash;</span>

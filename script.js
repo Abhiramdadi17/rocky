@@ -712,11 +712,53 @@ function initConfettiResize() {
 }
 
 /* =============================================
-   ASK BUTTONS
+   ASK BUTTONS — ESCALATING CHAOS
    ============================================= */
 function initAskButtons() {
   let noAttempts = 0;
   let noDodging = false;
+  const spawnContainer = $('#spawnedButtons');
+
+  const noMessages = [
+    'Maybe not...',
+    'Are you sure? \uD83E\uDD14',
+    'Really though?? \uD83D\uDE33',
+    'You can\'t escape! \uD83D\uDE02',
+    'RESISTANCE IS FUTILE \uD83D\uDE08',
+    'Last chance...',
+    'Fine, I\'ll go \uD83D\uDE24',
+  ];
+
+  const yesTexts = [
+    'Please? \uD83E\uDD7A', 'Pretty please? \uD83D\uDE4F', 'Say yes! \u2728',
+    'Come onnn \uD83D\uDE80', 'You know you want to \uD83D\uDE0F', 'Rocky says yes! \uD83E\uDEA8',
+    'Do it for science! \uD83D\uDD2C', 'YESSS \uD83D\uDCAB', 'Just click me! \uD83C\uDFAC',
+    'Yes yes yes! \uD83C\uDF89', 'One small click... \uD83C\uDF19', 'Houston says yes! \uD83D\uDEF8',
+    'For Rocky! \uD83D\uDC7D', 'SAY YES \uD83D\uDD25', 'click me click me! \u2B50',
+    'YES \uD83D\uDE80', 'yes? \uD83E\uDD7A', 'YES! \uD83C\uDF1F', 'yesyesyes', 'Y E S',
+    'DO IT \uD83D\uDCAA', 'Accept mission! \uD83D\uDC68\u200D\uD83D\uDE80', 'Tap here! \uD83D\uDC46',
+  ];
+
+  function spawnYesButtons(count, floating) {
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const btn = document.createElement('button');
+        btn.className = floating ? 'spawned-yes floating' : 'spawned-yes';
+        btn.textContent = yesTexts[Math.floor(Math.random() * yesTexts.length)];
+        btn.style.animationDelay = (i * 0.08) + 's';
+        btn.addEventListener('click', triggerYes);
+
+        if (floating) {
+          btn.style.left = (10 + Math.random() * 75) + 'vw';
+          btn.style.top = (10 + Math.random() * 75) + 'vh';
+          btn.style.fontSize = (14 + Math.random() * 10) + 'px';
+          document.body.appendChild(btn);
+        } else {
+          spawnContainer.appendChild(btn);
+        }
+      }, i * 100);
+    }
+  }
 
   function handleNoProximity(e) {
     if (noDodging) return;
@@ -734,39 +776,62 @@ function initAskButtons() {
 
   function dodgeNo() {
     noAttempts++;
-
-    // Whoosh!
     playWhoosh();
 
-    if (noAttempts >= 3) {
-      // Transform into Yes
+    // Stage 7+: Transform into surrender button
+    if (noAttempts >= 7) {
       noDodging = true;
-      btnNo.classList.remove('dodging');
+      btnNo.classList.remove('dodging', 'shrinking', 'tiny');
       btnNo.style = '';
-      btnNo.textContent = 'Okay fine, yes 😂';
+      btnNo.textContent = 'Fine, I\'ll go \uD83D\uDE24';
       btnNo.style.background = 'var(--teal)';
       btnNo.style.color = 'var(--black)';
       btnNo.style.borderColor = 'var(--teal)';
+      btnNo.style.fontSize = '20px';
+      btnNo.style.minWidth = '250px';
       btnNo.onclick = () => triggerYes();
       document.removeEventListener('mousemove', handleNoProximity);
       return;
     }
 
+    // Dodge the button
     btnNo.classList.add('dodging');
-
     const pad = 20;
     const w = btnNo.offsetWidth;
     const h = btnNo.offsetHeight;
     const maxX = window.innerWidth - w - pad;
     const maxY = window.innerHeight - h - pad;
-    const newX = Math.max(pad, Math.random() * maxX);
-    const newY = Math.max(pad, Math.random() * maxY);
+    btnNo.style.left = Math.max(pad, Math.random() * maxX) + 'px';
+    btnNo.style.top  = Math.max(pad, Math.random() * maxY) + 'px';
 
-    btnNo.style.left = newX + 'px';
-    btnNo.style.top  = newY + 'px';
+    // Update text
+    btnNo.textContent = noMessages[Math.min(noAttempts, noMessages.length - 1)];
 
-    const msgs = ['Maybe not...', 'Are you sure?', 'Think again! 🤔'];
-    btnNo.textContent = msgs[Math.min(noAttempts, msgs.length - 1)];
+    // Escalation stages
+    if (noAttempts === 2) {
+      // Spawn 3 inline yes buttons
+      spawnYesButtons(3, false);
+    } else if (noAttempts === 3) {
+      // Spawn 5 more + screen shake
+      spawnYesButtons(5, false);
+      document.body.classList.add('screen-shake');
+      setTimeout(() => document.body.classList.remove('screen-shake'), 400);
+    } else if (noAttempts === 4) {
+      // Spawn 4 floating buttons around the screen
+      btnNo.classList.add('shrinking');
+      spawnYesButtons(4, true);
+    } else if (noAttempts === 5) {
+      // Even more floating chaos
+      btnNo.classList.add('tiny');
+      spawnYesButtons(6, true);
+      document.body.classList.add('screen-shake');
+      setTimeout(() => document.body.classList.remove('screen-shake'), 400);
+    } else if (noAttempts === 6) {
+      // MAXIMUM CHAOS — flood the screen
+      spawnYesButtons(10, true);
+      document.body.classList.add('screen-shake');
+      setTimeout(() => document.body.classList.remove('screen-shake'), 600);
+    }
   }
 
   document.addEventListener('mousemove', handleNoProximity);
@@ -794,6 +859,10 @@ function initAskButtons() {
     // Remove dodge button if floating
     btnNo.style.display = 'none';
 
+    // Remove all spawned buttons
+    document.querySelectorAll('.spawned-yes').forEach(b => b.remove());
+    if (spawnContainer) spawnContainer.innerHTML = '';
+
     // Show accepted message
     setTimeout(() => {
       acceptedMsg.classList.add('show');
@@ -813,6 +882,7 @@ function initAskButtons() {
 
     // Clean up
     noDodging = true;
+    document.removeEventListener('mousemove', handleNoProximity);
     document.removeEventListener('mousemove', handleNoProximity);
   }
 }
