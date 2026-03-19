@@ -625,9 +625,9 @@ body.loaded .btn-pill {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 120px;
-  height: 50px;
-  background: linear-gradient(135deg, transparent 20%, rgba(3, 0, 8, 0.9) 80%);
+  width: 220px;
+  height: 80px;
+  background: linear-gradient(135deg, transparent 10%, rgba(3, 0, 8, 0.95) 60%);
   border-radius: 0 0 24px 0;
   z-index: 2;
   pointer-events: none;
