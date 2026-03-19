@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project: Ask Her Out — A Cosmic Mission</title>
+  <meta name="description" content="A cinematic, space-themed invitation inspired by Project Hail Mary. Will you join the mission?" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== CUSTOM CURSOR ===== -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ===== SCROLL PROGRESS BAR ===== -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ===== STARFIELD CANVAS ===== -->
+  <canvas id="starfield"></canvas>
+
+  <!-- ===== FILM GRAIN OVERLAY ===== -->
+  <div class="film-grain"></div>
+
+  <!-- ===== PRELOADER (Section 0) ===== -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-circle" id="preloaderCircle"></div>
+    <div class="preloader-text" id="preloaderText"></div>
+    <div class="preloader-progress">
+      <div class="preloader-progress-bar" id="preloaderBar"></div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT (hidden until preloader done) ===== -->
+  <main id="mainContent" class="main-hidden">
+
+    <!-- SECTION 1: HERO -->
+    <section id="hero" class="section hero">
+      <video
+        class="hero-video"
+        autoplay muted loop playsinline
+        preload="none"
+        poster="preview.webp"
+      >
+        <source src="Astronaut_floating_in_202603191438.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+
+      <!-- Mission badge -->
+      <div class="mission-badge">
+        <svg viewBox="0 0 120 120" class="badge-svg">
+          <defs>
+            <path id="badgeCircle" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
+          </defs>
+          <text class="badge-text">
+            <textPath href="#badgeCircle">HAIL MARY MISSION · CREW MANIFEST · </textPath>
+          </text>
+          <circle cx="60" cy="60" r="6" fill="#00f5d4" opacity="0.6" />
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <p class="hero-label anim-line" data-delay="0">CLASSIFIED TRANSMISSION</p>
+        <h1 class="hero-title">
+          <span class="anim-line" data-delay="1">Houston,</span>
+          <span class="hero-title-gold anim-line" data-delay="2">we have a question.</span>
+        </h1>
+      </div>
+
+      <button class="btn-pill" id="beginMission">
+        <span>INITIATE MISSION ↓</span>
+      </button>
+
+      <div class="scroll-chevron" id="scrollChevron">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f5d4" stroke-width="1.5">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE DISTANCE -->
+    <section id="distance" class="section distance-section">
+      <div class="parallax-bg distance-bg" style="background-image:url('preview (3).webp');"></div>
+      <div class="section-overlay"></div>
+      <div class="watermark-text" aria-hidden="true">ALONE</div>
+
+      <!-- Eyebrow -->
+      <div class="section-eyebrow">
+        <span class="eyebrow-line"></span>
+        <p class="eyebrow-label">MISSION BRIEF · CLASSIFIED DOSSIER</p>
+        <span class="eyebrow-line"></span>
+      </div>
+
+      <div class="stat-cards" id="statCards">
+        <div class="glass stat-card anim-section" data-delay="0">
+          <div class="stat-number" data-target="40">0</div>
+          <div class="stat-unit">LIGHT YEARS</div>
+          <div class="stat-label">Distance traveled</div>
+        </div>
+        <div class="glass stat-card anim-section" data-delay="1">
+          <div class="stat-number" data-target="1">0</div>
+          <div class="stat-unit">ASTRONAUT</div>
+          <div class="stat-label">Alone in space</div>
+        </div>
+        <div class="glass stat-card anim-section" data-delay="2">
+          <div class="stat-number stat-infinity">∞</div>
+          <div class="stat-unit">REASONS</div>
+          <div class="stat-label">To ask you out</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE TRANSMISSION -->
+    <section id="transmission" class="section transmission-section">
+      <div class="transmission-grid">
+        <div class="transmission-image anim-section">
+          <img src="preview (1).webp" alt="Astronaut floating" loading="lazy" />
+        </div>
+        <div class="transmission-text anim-section" data-delay="1">
+          <p class="label-teal">MISSION LOG · ENTRY 001</p>
+          <blockquote class="quote-block">
+            &ldquo;Ryland Grace woke up alone, 40 light years from home. He didn&rsquo;t give up. Neither will I.&rdquo;
+          </blockquote>
+          <p class="quote-sub">
+            This mission needs a co-pilot. I&rsquo;ve reviewed the candidates. There&rsquo;s only one name on the list.
+          </p>
+          <div class="teal-line" id="tealLine"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: MEET ROCKY -->
+    <section id="meetRocky" class="section rocky-section">
+      <div class="parallax-bg rocky-bg" style="background-image:url('preview (2).webp');"></div>
+      <div class="section-overlay dark-overlay"></div>
+
+      <!-- Eyebrow -->
+      <div class="section-eyebrow">
+        <span class="eyebrow-line"></span>
+        <p class="eyebrow-label">ALIEN CONTACT · MISSION DAY 312</p>
+        <span class="eyebrow-line"></span>
+      </div>
+
+      <div class="rocky-layout">
+        <div class="rocky-video-frame anim-section">
+          <video
+            autoplay muted loop playsinline
+            preload="none"
+            poster="preview (2).webp"
+          >
+            <source src="Stone_creature_waving_202603191518.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        <div class="glass rocky-card anim-section" data-delay="1">
+          <p class="label-teal">ALIEN CORRESPONDENT · ROCKY</p>
+          <p class="rocky-quote">
+            &ldquo;Even a creature from another star system understands: some missions are too important to fly solo.&rdquo;
+          </p>
+          <p class="rocky-signed">&mdash; Rocky, Tau Ceti</p>
+        </div>
+      </div>
+
+      <!-- Sparkle canvas for cursor trail -->
+      <canvas id="sparkleCanvas" class="sparkle-canvas"></canvas>
+
+      <!-- Rocky float with tooltip -->
+      <div class="rocky-float-wrapper" id="rockyFloatWrapper">
+        <div class="rocky-tooltip" id="rockyTooltip">Rocky says hi! 👋</div>
+        <img
+          src="Gemini_Generated_Image_uiuhopuiuhopuiuh-removebg-preview.png"
+          alt="Rocky the alien"
+          class="rocky-float-img"
+          id="rockyFloat"
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <!-- SECTION 5: THE ASK -->
+    <section id="theAsk" class="section ask-section">
+      <div class="parallax-bg ask-bg" style="background-image:url('preview.webp');"></div>
+      <div class="section-overlay dark-overlay"></div>
+      <canvas id="confettiCanvas"></canvas>
+
+      <div class="ask-content" id="askContent">
+        <p class="label-teal anim-section">INCOMING TRANSMISSION · PRIORITY ALPHA</p>
+        <h2 class="ask-heading anim-section" data-delay="1" id="askHeading">
+          <span id="typewriterLine1"></span>
+          <span id="typewriterLine2"></span>
+          <span class="ask-name" id="askNameDisplay"></span>
+        </h2>
+        <p class="ask-sub anim-section" data-delay="2">Project Hail Mary. On the big screen. You and me.</p>
+        <p class="ask-date anim-section" data-delay="3" id="askDateDisplay"></p>
+
+        <div class="ask-buttons anim-section" data-delay="4" id="askButtons">
+          <button class="btn-yes" id="btnYes">I'm in 🚀</button>
+          <button class="btn-no" id="btnNo">Maybe not...</button>
+        </div>
+
+        <p class="keyboard-hint anim-section" data-delay="5">press <kbd>Y</kbd> to accept mission</p>
+      </div>
+
+      <!-- Accepted message -->
+      <div class="accepted-msg" id="acceptedMsg">
+        <img
+          src="Gemini_Generated_Image_uiuhopuiuhopuiuh-removebg-preview.png"
+          alt="Rocky celebrating"
+          class="accepted-rocky"
+          id="acceptedRocky"
+        />
+        <h2 class="accepted-title">Mission Accepted. 🚀</h2>
+        <p class="accepted-sub">See you at the theater.<br/>This is going to be incredible.</p>
+        <p class="accepted-theater" id="acceptedTheater"></p>
+        <div class="countdown-block" id="countdownBlock">
+          <span class="countdown-number" id="countdownDays">&mdash;</span>
+          <span class="countdown-label">days until launch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: FOOTER -->
+    <footer id="footer" class="section footer-section">
+      <img
+        src="Gemini_Generated_Image_uiuhopuiuhopuiuh-removebg-preview.png"
+        alt="Rocky"
+        class="footer-rocky"
+      />
+      <p class="footer-title">Project Hail Mary</p>
+      <p class="footer-sub">A real mission. A real theater. A real question.</p>
+      <p class="footer-theater" id="footerTheater"></p>
+      <p class="footer-bottom">Made with ♥ and 40 light years of courage · <span id="footerYear"></span></p>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
