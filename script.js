@@ -127,10 +127,14 @@ function startExperience() {
   initKeyboardShortcuts();
   initBtnPillScrollHide();
   initRockyTooltipAutoShow();
+  initAudioToggle();
+  initRockyEasterEgg();
 
   beginBtn.addEventListener('click', () => {
     document.getElementById('distance').scrollIntoView({ behavior: 'smooth' });
     startAmbientAudio();
+    const toggleBtn = $('#audioToggle');
+    if (toggleBtn) setTimeout(() => toggleBtn.classList.add('visible'), 1500);
   });
 }
 
@@ -138,12 +142,17 @@ function startExperience() {
    SPACE AMBIENT AUDIO — Web Audio API drone
    ============================================= */
 let ambientStarted = false;
+let ambientGain = null;
+let ambientCtx = null;
+let audioMuted = false;
 function startAmbientAudio() {
   if (ambientStarted) return;
   ambientStarted = true;
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
+    ambientCtx = ac;
     const gain = ac.createGain();
+    ambientGain = gain;
     gain.gain.value = 0;
     gain.connect(ac.destination);
 
@@ -174,7 +183,9 @@ function startAmbientAudio() {
     ng.connect(gain);
     noise.start();
 
-    gain.gain.linearRampToValueAtTime(0.15, ac.currentTime + 3);
+    if (!audioMuted) {
+      gain.gain.linearRampToValueAtTime(0.15, ac.currentTime + 3);
+    }
   } catch (e) { /* silent */ }
 }
 
@@ -571,7 +582,7 @@ function initAskTypewriter() {
         }
       });
     },
-    { threshold: 0.3 }
+    { threshold: 0.15 }
   );
   obs.observe(heading);
 }
@@ -944,4 +955,75 @@ function warpSpeed() {
   }
 
   draw();
+}
+
+/* =============================================
+   AUDIO TOGGLE
+   ============================================= */
+function initAudioToggle() {
+  const btn = $('#audioToggle');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    audioMuted = !audioMuted;
+
+    const iconOn = $('#audioIconOn');
+    const iconOff = $('#audioIconOff');
+
+    if (audioMuted) {
+      if (ambientGain && ambientCtx) {
+        ambientGain.gain.linearRampToValueAtTime(0, ambientCtx.currentTime + 0.3);
+      }
+      iconOn.classList.add('hidden');
+      iconOff.classList.remove('hidden');
+    } else {
+      if (ambientGain && ambientCtx) {
+        ambientGain.gain.linearRampToValueAtTime(0.15, ambientCtx.currentTime + 0.3);
+      }
+      iconOn.classList.remove('hidden');
+      iconOff.classList.add('hidden');
+    }
+  });
+}
+
+/* =============================================
+   ROCKY EASTER EGG — click 5 times
+   ============================================= */
+function initRockyEasterEgg() {
+  const rocky = $('#rockyFloat');
+  if (!rocky) return;
+
+  let clickCount = 0;
+  const messages = [
+    'Rocky noticed you! \uD83D\uDC40',
+    'Rocky is curious... \uD83E\uDD14',
+    'Rocky likes you! \u2B50',
+    'Rocky is impressed! \uD83C\uDF1F',
+    '\u2728 ROCKY APPROVES THIS MISSION! \u2728',
+  ];
+
+  rocky.addEventListener('click', () => {
+    clickCount++;
+
+    rocky.classList.remove('spin-crazy');
+    void rocky.offsetWidth;
+    rocky.classList.add('spin-crazy');
+    setTimeout(() => rocky.classList.remove('spin-crazy'), 500);
+
+    if (clickCount <= messages.length) {
+      const existing = document.querySelector('.rocky-secret-msg');
+      if (existing) existing.remove();
+
+      const msg = document.createElement('div');
+      msg.className = 'rocky-secret-msg';
+      msg.textContent = messages[clickCount - 1];
+      rocky.closest('.rocky-float-wrapper').appendChild(msg);
+
+      setTimeout(() => msg.remove(), 2500);
+    }
+
+    if (clickCount >= messages.length) {
+      setTimeout(() => { clickCount = 0; }, 3000);
+    }
+  });
 }
