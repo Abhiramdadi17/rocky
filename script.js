@@ -793,12 +793,20 @@ function initAskButtons() {
       btnNo.style.borderColor = 'var(--teal)';
       btnNo.style.fontSize = '20px';
       btnNo.style.minWidth = '250px';
+      
+      // Return it to the button container
+      const container = $('#askButtons');
+      if (container) container.appendChild(btnNo);
+      
       btnNo.onclick = () => triggerYes();
       document.removeEventListener('mousemove', handleNoProximity);
       return;
     }
 
-    // Dodge the button
+    // Dodge the button (append to body so fixed positioning ignores ancestor transforms)
+    if (btnNo.parentElement !== document.body) {
+      document.body.appendChild(btnNo);
+    }
     btnNo.classList.add('dodging');
     const pad = 20;
     const w = btnNo.offsetWidth;
