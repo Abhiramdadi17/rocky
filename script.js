@@ -156,9 +156,14 @@ function startAmbientAudio() {
     ambientGain = gain;
     gain.gain.value = 0;
     gain.connect(ac.destination);
-    
-    // Ambient drone removed per user request (was being mistaken for video audio)
   } catch (e) { /* silent */ }
+
+  const bgMusic = $('#bgMusic');
+  if (bgMusic) {
+    bgMusic.muted = audioMuted;
+    bgMusic.volume = 0.4;
+    bgMusic.play().catch(() => {});
+  }
 }
 
 /* =============================================
@@ -1117,12 +1122,14 @@ function initAudioToggle() {
       if (ambientGain && ambientCtx) {
         ambientGain.gain.linearRampToValueAtTime(0, ambientCtx.currentTime + 0.3);
       }
+      if ($('#bgMusic')) $('#bgMusic').muted = true;
       iconOn.classList.add('hidden');
       iconOff.classList.remove('hidden');
     } else {
       if (ambientGain && ambientCtx) {
         ambientGain.gain.linearRampToValueAtTime(0.15, ambientCtx.currentTime + 0.3);
       }
+      if ($('#bgMusic')) $('#bgMusic').muted = false;
       iconOn.classList.remove('hidden');
       iconOff.classList.add('hidden');
     }
